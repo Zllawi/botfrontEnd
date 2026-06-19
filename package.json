@@ -1,0 +1,10 @@
+{
+  "name": "botfrontend",
+  "version": "1.0.0",
+  "description": "Frontend web assets and page renderers for Zllawi be honest bot.",
+  "private": true,
+  "type": "commonjs",
+  "scripts": {
+    "check": "node -e \"require('./src/web/renderDashboardPage'); require('./src/web/renderPublicLandingPage'); require('./src/web/renderUserPortalPage'); require('./src/web/dashboardSchema'); console.log('frontend modules loaded')\""
+  }
+}
