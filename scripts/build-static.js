@@ -15,6 +15,7 @@ fs.cpSync(publicDir, assetsDir, { recursive: true });
 const indexHtml = renderPublicLandingPage({
   inviteUrl: process.env.PUBLIC_INVITE_URL || "",
   oauthConfigured: Boolean(process.env.PUBLIC_BACKEND_URL),
+  backendUrl: process.env.PUBLIC_BACKEND_URL || "",
   sessionUser: null
 });
 

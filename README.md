@@ -26,3 +26,23 @@ git push -u origin main
 ```
 
 If the remote already has commits, run `git pull --rebase origin main` before pushing.
+
+## Vercel
+
+Use these project settings:
+
+```text
+Framework Preset: Other
+Build Command: npm run build
+Output Directory: dist
+Install Command: npm install
+```
+
+Set these environment variables in Vercel:
+
+```text
+PUBLIC_INVITE_URL=https://discord.com/oauth2/authorize?client_id=YOUR_CLIENT_ID&permissions=8&integration_type=0&scope=bot+applications.commands
+PUBLIC_BACKEND_URL=https://YOUR-BACKEND-URL
+```
+
+`PUBLIC_INVITE_URL` enables the invite button. `PUBLIC_BACKEND_URL` enables the Discord OAuth login button and should point to the deployed bot backend that serves `/auth/discord/login` and `/dashboard`.

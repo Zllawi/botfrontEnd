@@ -7,20 +7,29 @@ function escapeHtml(value) {
     .replaceAll("'", "&#39;");
 }
 
-function renderPublicLandingPage({ inviteUrl, oauthConfigured, sessionUser }) {
+function normalizeBaseUrl(value) {
+  return String(value || "").trim().replace(/\/+$/u, "");
+}
+
+function renderPublicLandingPage({ inviteUrl, oauthConfigured, sessionUser, backendUrl }) {
   const hasInvite = Boolean(inviteUrl);
   const loggedIn = Boolean(sessionUser?.id);
+  const safeBackendUrl = normalizeBaseUrl(backendUrl);
+  const loginUrl = safeBackendUrl
+    ? `${safeBackendUrl}/auth/discord/login?returnTo=/dashboard`
+    : "/auth/discord/login?returnTo=/dashboard";
+  const dashboardUrl = safeBackendUrl ? `${safeBackendUrl}/dashboard` : "/dashboard";
 
   const inviteButton = hasInvite
     ? `<a class="btn" href="${escapeHtml(inviteUrl)}" target="_blank" rel="noopener noreferrer">دعوة البوت</a>`
     : `<span class="btn btn--disabled">رابط الدعوة غير متاح</span>`;
 
   const loginButton = oauthConfigured
-    ? `<a class="btn btn--ghost" href="/auth/discord/login?returnTo=/dashboard">تسجيل الدخول</a>`
+    ? `<a class="btn btn--ghost" href="${escapeHtml(loginUrl)}">تسجيل الدخول</a>`
     : `<span class="btn btn--disabled">OAuth غير مفعّل</span>`;
 
   const dashboardButton = loggedIn
-    ? `<a class="btn btn--primary" href="/dashboard">الذهاب إلى الداشبورد</a>`
+    ? `<a class="btn btn--primary" href="${escapeHtml(dashboardUrl)}">الذهاب إلى الداشبورد</a>`
     : loginButton;
 
   return `<!doctype html>
