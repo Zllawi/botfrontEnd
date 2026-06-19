@@ -6,6 +6,7 @@
   "type": "commonjs",
   "scripts": {
     "build": "node scripts/build-static.js",
+    "start": "npm run build && node scripts/serve-static.js",
     "check": "node -e \"require('./src/web/renderDashboardPage'); require('./src/web/renderPublicLandingPage'); require('./src/web/renderUserPortalPage'); require('./src/web/dashboardSchema'); console.log('frontend modules loaded')\""
   }
 }
