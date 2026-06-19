@@ -3,7 +3,7 @@ const http = require("http");
 const path = require("path");
 
 const rootDir = path.join(__dirname, "..", "dist");
-const port = Number(process.env.PORT || 3000);
+const startPort = Number(process.env.PORT || 3000);
 
 const contentTypes = {
   ".css": "text/css; charset=utf-8",
@@ -15,7 +15,7 @@ const contentTypes = {
 };
 
 function resolveRequestPath(requestUrl) {
-  const url = new URL(requestUrl, `http://localhost:${port}`);
+  const url = new URL(requestUrl, `http://localhost:${startPort}`);
   const cleanPath = decodeURIComponent(url.pathname).replace(/^\/+/, "");
   const filePath = path.join(rootDir, cleanPath || "index.html");
   const resolvedPath = path.resolve(filePath);
@@ -31,24 +31,41 @@ function resolveRequestPath(requestUrl) {
   return path.join(rootDir, "index.html");
 }
 
-const server = http.createServer((req, res) => {
-  const filePath = resolveRequestPath(req.url || "/");
-  const extension = path.extname(filePath).toLowerCase();
+function createServer() {
+  return http.createServer((req, res) => {
+    const filePath = resolveRequestPath(req.url || "/");
+    const extension = path.extname(filePath).toLowerCase();
 
-  fs.readFile(filePath, (error, content) => {
-    if (error) {
-      res.writeHead(500, { "Content-Type": "text/plain; charset=utf-8" });
-      res.end("Server error");
+    fs.readFile(filePath, (error, content) => {
+      if (error) {
+        res.writeHead(500, { "Content-Type": "text/plain; charset=utf-8" });
+        res.end("Server error");
+        return;
+      }
+
+      res.writeHead(200, {
+        "Content-Type": contentTypes[extension] || "application/octet-stream"
+      });
+      res.end(content);
+    });
+  });
+}
+
+function listen(port) {
+  const server = createServer();
+
+  server.once("error", (error) => {
+    if (error.code === "EADDRINUSE" && !process.env.PORT) {
+      listen(port + 1);
       return;
     }
 
-    res.writeHead(200, {
-      "Content-Type": contentTypes[extension] || "application/octet-stream"
-    });
-    res.end(content);
+    throw error;
   });
-});
 
-server.listen(port, () => {
-  console.log(`Frontend running at http://localhost:${port}`);
-});
+  server.listen(port, () => {
+    console.log(`Frontend running at http://localhost:${port}`);
+  });
+}
+
+listen(startPort);
